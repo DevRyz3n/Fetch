@@ -13,18 +13,29 @@ import java.util.List;
 
 public final class Data {
 
-    private static String[] sampleUrls = {"http://media.mongodb.org/zips.json"};
+    static ArrayList<String> musicIDs = new ArrayList<>();
 
-    Data(String[] urls) {
-        sampleUrls = urls;
+    static ArrayList<String> musicNames = new ArrayList<>();
+
+    static ArrayList<String> musicProducers = new ArrayList<>();
+
+
+    private Data() {
+
     }
+
 
     @NonNull
     private static List<Request> getFetchRequests() {
         final List<Request> requests = new ArrayList<>();
-        for (String sampleUrl : sampleUrls) {
-            final Request request = new Request(sampleUrl, getFilePath(sampleUrl));
-            requests.add(request);
+        for (String musicID : musicIDs) {
+            for (String musicName : musicNames) {
+                for (String musicProducer : musicProducers) {
+                    String DL_URL_BASE = "http://music.163.com/song/media/outer/url?id=";
+                    final Request request = new Request(DL_URL_BASE + musicID, getFilePath(musicProducer + " - " + musicName));
+                    requests.add(request);
+                }
+            }
         }
         return requests;
     }
@@ -39,11 +50,9 @@ public final class Data {
     }
 
     @NonNull
-    private static String getFilePath(@NonNull final String url) {
-        final Uri uri = Uri.parse(url);
-        final String fileName = uri.getLastPathSegment();
+    private static String getFilePath(@NonNull final String musicTitle) {
         final String dir = getSaveDir();
-        return (dir + "/DownloadList/" + fileName);
+        return (dir + musicTitle + ".mp3");
     }
 
     @NonNull
@@ -66,7 +75,7 @@ public final class Data {
 
     @NonNull
     public static String getSaveDir() {
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/fetch";
+        return Environment.getExternalStorageDirectory().toString() + "/netease/cloudmusic/";
     }
 
 }

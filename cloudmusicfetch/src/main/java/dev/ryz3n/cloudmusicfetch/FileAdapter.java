@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -11,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,6 +23,7 @@ import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.Status;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +33,8 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
     private final List<DownloadData> downloads = new ArrayList<>();
     @NonNull
     private final ActionListener actionListener;
+
+    static String fileName;
 
     FileAdapter(@NonNull final ActionListener actionListener) {
         this.actionListener = actionListener;
@@ -55,6 +61,11 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
         final Context context = holder.itemView.getContext();
 
         holder.titleTextView.setText(uri.getLastPathSegment());
+
+        String s = downloadData.download.getFile();
+        holder.titleTextView.setText(s);
+
+
         holder.statusTextView.setText(getStatusString(status));
 
         int progress = downloadData.download.getProgress();
@@ -81,13 +92,20 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
                 holder.actionButton.setText(R.string.view);
                 holder.actionButton.setOnClickListener(view -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        Toast.makeText(context, "Downloaded Path:" + downloadData.download.getFile(), Toast.LENGTH_LONG).show();
-                        return;
+                        //Toast.makeText(context, "Downloaded Path:" + downloadData.download.getFile(), Toast.LENGTH_LONG).show();
+                        //return;
+                        try {
+                            Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                            m.invoke(null);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                     }
                     final File file = new File(downloadData.download.getFile());
                     final Uri uri1 = Uri.fromFile(file);
                     final Intent share = new Intent(Intent.ACTION_VIEW);
-                    share.setDataAndType(uri1, Utils.getMimeType(context, uri1));
+                    share.setDataAndType(uri1, "audio/*");
                     context.startActivity(share);
                 });
                 break;
@@ -161,7 +179,7 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
             final DownloadData downloadData = new DownloadData();
             downloadData.id = download.getId();
             downloadData.download = download;
-            downloads.add(downloadData);
+            downloads.add(0,downloadData);
             notifyItemInserted(downloads.size() - 1);
         } else {
             data.download = download;

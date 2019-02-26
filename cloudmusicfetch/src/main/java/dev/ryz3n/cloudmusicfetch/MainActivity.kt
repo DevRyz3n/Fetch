@@ -1,12 +1,15 @@
 package dev.ryz3n.cloudmusicfetch
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
+import android.widget.Toast
 import com.tonyodev.fetch2.*
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2core.Func
@@ -42,6 +45,45 @@ class MainActivity : AppCompatActivity(), ActionListener {
         checkStoragePermissions()
     }
 
+    private fun isShareText(ctx: Context, shareText: String): Boolean {
+        return if (shareText.startsWith("分享") and shareText.endsWith("(来自@网易云音乐)")) {
+            true
+        } else {
+            Toast.makeText(ctx, "分享的格式不正确，请重试", Toast.LENGTH_SHORT).show()
+            false
+        }
+    }
+
+    private fun receiveShareMusic() {
+        // 分享
+        when {
+            intent?.action == Intent.ACTION_SEND -> {
+                if ("text/plain" == intent.type) {
+                    handleSendText(intent)
+                }
+            }
+        }
+    }
+
+    private fun handleSendText(intent: Intent) {
+        intent.getStringExtra(Intent.EXTRA_TEXT)?.let { shareText ->
+            // Update UI to reflect text being shared
+
+            tv_share_text.text = shareText
+            if (isShareText(applicationContext, shareText)) {
+
+                // 分割格式化后的内容，数组中0、1、2、3下标分别为 制作者、歌曲名、歌曲ID、分享者ID
+                val musicInfo = shareText.shareFormat().split("--", "/?userid=")
+                FileAdapter.fileName = musicInfo[0].trim() + " - " + musicInfo[1].trim()
+                Data.musicIDs.add(musicInfo[2].trim())
+                Data.musicNames.add(musicInfo[1].trim().musicNameFormat())
+                Data.musicProducers.add(musicInfo[0].trim().musicNameFormat())
+
+                enqueueDownloads()
+            }
+        }
+    }
+
     private fun setUpViews() {
         rv_list.layoutManager = LinearLayoutManager(this)
         fileAdapter = FileAdapter(this)
@@ -52,14 +94,14 @@ class MainActivity : AppCompatActivity(), ActionListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
         } else {
-            enqueueDownloads()
+            receiveShareMusic()
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == STORAGE_PERMISSION_CODE && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            enqueueDownloads()
+            receiveShareMusic()
         } else {
             Snackbar.make(cl_root, R.string.permission_not_enabled, Snackbar.LENGTH_INDEFINITE).show()
         }
@@ -67,7 +109,7 @@ class MainActivity : AppCompatActivity(), ActionListener {
 
     private fun enqueueDownloads() {
         val requests = Data.getFetchRequestWithGroupId(GROUP_ID)
-        fetch.enqueue(requests, Func {  })
+        fetch.enqueue(requests, Func { })
 
     }
 
@@ -151,3 +193,20 @@ class MainActivity : AppCompatActivity(), ActionListener {
         fetch.retry(id)
     }
 }
+
+fun String.shareFormat() = this.trim().substring(2, this.length)
+        .replace("的单曲《", "--")
+        .replace("》:", "--")
+        .replace("http://music.163.com/song/", "")
+        .replace("https://music.163.com/song/", "")
+        .replace(" (来自@网易云音乐)", "")
+
+fun String.musicNameFormat() = this.replace('?', '？')
+        .replace('/', '_')
+        .replace('\\', '＼')
+        .replace(':', '：')
+        .replace('*', '﹡')
+        .replace('\"', '”')
+        .replace('<', '＜')
+        .replace('>', '＞')
+        .replace('|', '︱')
