@@ -16,7 +16,7 @@
     <string name="permission_not_enabled">为了正常的运作，程序需要存储权限</string>
     <string name="pause">暂停</string>
     <string name="fetch_done">下载完毕</string>
-    <string name="downloading">下载中...</string>
+    <string name="downloading">下载中…</string>
     <string name="downloaded_files_deleted">下载文件已删除</string>
     <string name="download_eta_min">"还需 %1$d分 %2$d秒 "</string>
     <string name="download_eta_sec">剩余 %1$d秒</string>
