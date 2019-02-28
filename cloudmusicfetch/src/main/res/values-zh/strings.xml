@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">云音乐下载器</string>
+    <string name="cancel">取消</string>
+    <string name="delete">删除</string>
+    <string name="delete_all_files">删除下载文件</string>
+    <string name="delete_title">确定要删除 %1$s 吗？</string>
+    <string name="download">下载</string>
+    <string name="download_eta_hrs">还需 %1$d小时 %2$d分 %3$d秒</string>
+    <string name="view">播放</string>
+    <string name="start">开始</string>
+    <string name="retry">重试</string>
+    <string name="resume">继续</string>
+    <string name="reset">重置</string>
+    <string name="queued">队列</string>
+    <string name="permission_not_enabled">为了正常的运作，程序需要存储权限</string>
+    <string name="pause">暂停</string>
+    <string name="fetch_done">下载完毕</string>
+    <string name="downloading">下载中...</string>
+    <string name="downloaded_files_deleted">下载文件已删除</string>
+    <string name="download_eta_min">"还需 %1$d分 %2$d秒 "</string>
+    <string name="download_eta_sec">剩余 %1$d秒</string>
+</resources>
