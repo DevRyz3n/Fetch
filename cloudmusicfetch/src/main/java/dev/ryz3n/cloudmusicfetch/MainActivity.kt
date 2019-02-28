@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
-import android.widget.Toast
 import com.tonyodev.fetch2.*
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2core.Func
@@ -45,11 +44,24 @@ class MainActivity : AppCompatActivity(), ActionListener {
         checkStoragePermissions()
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        when {
+            getIntent()?.action == Intent.ACTION_SEND -> {
+                if ("text/plain" == getIntent().type) {
+                    handleSendText(getIntent())
+                }
+            }
+        }
+
+    }
+
     private fun isShareText(ctx: Context, shareText: String): Boolean {
         return if (shareText.startsWith("分享") and shareText.endsWith("(来自@网易云音乐)")) {
             true
         } else {
-            Toast.makeText(ctx, "分享的格式不正确，请重试", Toast.LENGTH_SHORT).show()
+            Snackbar.make(cl_root, ("\u274c")+" 下载失败，分享的格式不正确",Snackbar.LENGTH_LONG).show()
             false
         }
     }
@@ -72,8 +84,13 @@ class MainActivity : AppCompatActivity(), ActionListener {
             tv_share_text.text = shareText
             if (isShareText(applicationContext, shareText)) {
 
-                // 分割格式化后的内容，数组中0、1、2、3下标分别为 制作者、歌曲名、歌曲ID、分享者ID
+                // 分割格式化后的内容，list中0、1、2、3下标分别为 制作者、歌曲名、歌曲ID、分享者ID
                 val musicInfo = shareText.shareFormat().split("--", "/?userid=")
+                if (musicInfo.size != 4) {
+                    Snackbar.make(cl_root, ("\u274c")+" 下载失败，暂不支持非音乐的分享下载",Snackbar.LENGTH_LONG).show()
+                    return
+                }
+
                 FileAdapter.fileName = musicInfo[0].trim() + " - " + musicInfo[1].trim()
                 Data.musicIDs.add(musicInfo[2].trim())
                 Data.musicNames.add(musicInfo[1].trim().musicNameFormat())
@@ -110,7 +127,6 @@ class MainActivity : AppCompatActivity(), ActionListener {
     private fun enqueueDownloads() {
         val requests = Data.getFetchRequestWithGroupId(GROUP_ID)
         fetch.enqueue(requests, Func { })
-
     }
 
     override fun onResume() {
