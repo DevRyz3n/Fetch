@@ -38,7 +38,7 @@ open class DefaultFetchNotificationManager(context: Context) : FetchNotification
             var channel: NotificationChannel? = notificationManager.getNotificationChannel(channelId)
             if (channel == null) {
                 val channelName = context.getString(R.string.fetch_notification_default_channel_name)
-                channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+                channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
                 notificationManager.createNotificationChannel(channel)
             }
         }

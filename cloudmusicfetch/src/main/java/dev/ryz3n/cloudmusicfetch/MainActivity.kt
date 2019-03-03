@@ -35,8 +35,8 @@ class MainActivity : AppCompatActivity(), ActionListener {
 
         setUpViews()
         val fetchConfiguration = FetchConfiguration.Builder(this)
-                .setDownloadConcurrentLimit(4)
-                .setHttpDownloader(OkHttpDownloader(Downloader.FileDownloaderType.PARALLEL))
+                .setDownloadConcurrentLimit(5)
+                .setHttpDownloader(OkHttpDownloader(Downloader.FileDownloaderType.SEQUENTIAL))
                 .setNamespace(FETCH_NAMESPACE)
                 .setNotificationManager(DefaultFetchNotificationManager(this))
                 .build()
@@ -47,6 +47,16 @@ class MainActivity : AppCompatActivity(), ActionListener {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
+        /*fetch.close()
+
+        val fetchConfiguration = FetchConfiguration.Builder(this)
+                .setDownloadConcurrentLimit(3)
+                .setHttpDownloader(OkHttpDownloader(Downloader.FileDownloaderType.PARALLEL))
+                .setNamespace(FETCH_NAMESPACE)
+                .setNotificationManager(DefaultFetchNotificationManager(this))
+                .build()
+        fetch = Fetch.getInstance(fetchConfiguration)*/
+
         when {
             getIntent()?.action == Intent.ACTION_SEND -> {
                 if ("text/plain" == getIntent().type) {
@@ -55,13 +65,15 @@ class MainActivity : AppCompatActivity(), ActionListener {
             }
         }
 
+        fileAdapter.notifyDataSetChanged()
+
     }
 
     private fun isShareText(ctx: Context, shareText: String): Boolean {
         return if (shareText.startsWith("分享") and shareText.endsWith("(来自@网易云音乐)")) {
             true
         } else {
-            Snackbar.make(cl_root, ("\u274c")+" 下载失败，分享的格式不正确",Snackbar.LENGTH_LONG).show()
+            Snackbar.make(cl_root, ("\u274c") + " 下载失败，分享的格式不正确", Snackbar.LENGTH_LONG).show()
             false
         }
     }
@@ -87,16 +99,15 @@ class MainActivity : AppCompatActivity(), ActionListener {
                 // 分割格式化后的内容，list中0、1、2、3下标分别为 制作者、歌曲名、歌曲ID、分享者ID
                 val musicInfo = shareText.shareFormat().split("--", "/?userid=")
                 if (musicInfo.size != 4) {
-                    Snackbar.make(cl_root, ("\u274c")+" 下载失败，暂不支持非音乐的分享下载",Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(cl_root, ("\u274c") + " 下载失败，暂不支持非音乐的分享下载", Snackbar.LENGTH_LONG).show()
                     return
                 }
 
-                FileAdapter.fileName = musicInfo[0].trim() + " - " + musicInfo[1].trim()
-                Data.musicIDs.add(musicInfo[2].trim())
+                /*Data.musicIDs.add(musicInfo[2].trim())
                 Data.musicNames.add(musicInfo[1].trim().musicNameFormat())
-                Data.musicProducers.add(musicInfo[0].trim().musicNameFormat())
+                Data.musicProducers.add(musicInfo[0].trim().musicNameFormat())*/
 
-                enqueueDownloads()
+                enqueueDownload(musicInfo[2].trim(), musicInfo[1].trim().musicNameFormat(), musicInfo[0].trim().musicNameFormat())
             }
         }
     }
@@ -124,14 +135,14 @@ class MainActivity : AppCompatActivity(), ActionListener {
         }
     }
 
-    private fun enqueueDownloads() {
-        val requests = Data.getFetchRequestWithGroupId(GROUP_ID)
-        fetch.enqueue(requests, Func { })
+    private fun enqueueDownload(musicID: String, musicName: String, musicProducer: String) {
+        val request = Data.getFetchRequest(musicID, musicName, musicProducer)
+        fetch.enqueue(request, Func { })
     }
 
     override fun onResume() {
         super.onResume()
-        fetch.getDownloadsInGroup(GROUP_ID, Func {
+        fetch.getDownloads(Func {
             val list = ArrayList<Download>(it)
             list.sortWith(Comparator { first, second -> java.lang.Long.compare(first.created, second.created) })
             for (download in list) {

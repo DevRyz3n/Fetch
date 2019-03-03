@@ -13,11 +13,11 @@ import java.util.List;
 
 public final class Data {
 
-    static ArrayList<String> musicIDs = new ArrayList<>();
+    /*static ArrayList<String> musicIDs = new ArrayList<>();
 
     static ArrayList<String> musicNames = new ArrayList<>();
 
-    static ArrayList<String> musicProducers = new ArrayList<>();
+    static ArrayList<String> musicProducers = new ArrayList<>();*/
 
 
     private Data() {
@@ -26,28 +26,19 @@ public final class Data {
 
 
     @NonNull
-    private static List<Request> getFetchRequests() {
-        final List<Request> requests = new ArrayList<>();
-        for (String musicID : musicIDs) {
-            for (String musicName : musicNames) {
-                for (String musicProducer : musicProducers) {
-                    String DL_URL_BASE = "http://music.163.com/song/media/outer/url?id=";
-                    final Request request = new Request(DL_URL_BASE + musicID, getFilePath(musicProducer + " - " + musicName));
-                    requests.add(request);
-                }
-            }
-        }
-        return requests;
+    public static Request getFetchRequest(String musicID, String musicName, String musicProducer) {
+        String DL_URL_BASE = "http://music.163.com/song/media/outer/url?id=";
+        return new Request(DL_URL_BASE + musicID, getFilePath(musicProducer + " - " + musicName));
     }
 
-    @NonNull
+    /*@NonNull
     public static List<Request> getFetchRequestWithGroupId(final int groupId) {
         final List<Request> requests = getFetchRequests();
         for (Request request : requests) {
             request.setGroupId(groupId);
         }
         return requests;
-    }
+    }*/
 
     @NonNull
     private static String getFilePath(@NonNull final String musicTitle) {
