@@ -23,7 +23,7 @@ public class App extends Application {
         final FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(this)
                 .enableRetryOnNetworkGain(true)
                 .setDownloadConcurrentLimit(3)
-                .setHttpDownloader(new HttpUrlConnectionDownloader(Downloader.FileDownloaderType.PARALLEL))
+                .setHttpDownloader(new HttpUrlConnectionDownloader(Downloader.FileDownloaderType.SEQUENTIAL))
                 // OR
                 //.setHttpDownloader(getOkHttpDownloader())
                 .build();
@@ -34,7 +34,7 @@ public class App extends Application {
     private OkHttpDownloader getOkHttpDownloader() {
         final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
         return new OkHttpDownloader(okHttpClient,
-                Downloader.FileDownloaderType.PARALLEL);
+                Downloader.FileDownloaderType.SEQUENTIAL);
     }
 
 }

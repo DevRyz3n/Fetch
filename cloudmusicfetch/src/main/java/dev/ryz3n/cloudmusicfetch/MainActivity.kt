@@ -35,8 +35,8 @@ class MainActivity : AppCompatActivity(), ActionListener {
 
         setUpViews()
         val fetchConfiguration = FetchConfiguration.Builder(this)
-                .setDownloadConcurrentLimit(3)
-                .setHttpDownloader(OkHttpDownloader(Downloader.FileDownloaderType.PARALLEL))
+                .setDownloadConcurrentLimit(5)
+                .setHttpDownloader(OkHttpDownloader(Downloader.FileDownloaderType.SEQUENTIAL))
                 .setNamespace(FETCH_NAMESPACE)
                 .setNotificationManager(DefaultFetchNotificationManager(this))
                 .build()
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity(), ActionListener {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
-        fetch.close()
+        /*fetch.close()
 
         val fetchConfiguration = FetchConfiguration.Builder(this)
                 .setDownloadConcurrentLimit(3)
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity(), ActionListener {
                 .setNamespace(FETCH_NAMESPACE)
                 .setNotificationManager(DefaultFetchNotificationManager(this))
                 .build()
-        fetch = Fetch.getInstance(fetchConfiguration)
+        fetch = Fetch.getInstance(fetchConfiguration)*/
 
         when {
             getIntent()?.action == Intent.ACTION_SEND -> {
