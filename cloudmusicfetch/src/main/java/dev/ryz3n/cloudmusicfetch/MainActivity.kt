@@ -103,7 +103,6 @@ class MainActivity : AppCompatActivity(), ActionListener {
                     return
                 }
 
-                FileAdapter.fileName = musicInfo[0].trim() + " - " + musicInfo[1].trim()
                 /*Data.musicIDs.add(musicInfo[2].trim())
                 Data.musicNames.add(musicInfo[1].trim().musicNameFormat())
                 Data.musicProducers.add(musicInfo[0].trim().musicNameFormat())*/

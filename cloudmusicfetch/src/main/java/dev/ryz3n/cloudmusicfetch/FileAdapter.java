@@ -34,8 +34,6 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
     @NonNull
     private final ActionListener actionListener;
 
-    static String fileName;
-
     FileAdapter(@NonNull final ActionListener actionListener) {
         this.actionListener = actionListener;
     }
@@ -150,9 +148,8 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
 
         //Set delete action
         holder.itemView.setOnLongClickListener(v -> {
-            final Uri uri12 = Uri.parse(downloadData.download.getUrl());
             new AlertDialog.Builder(context)
-                    .setMessage(context.getString(R.string.delete_title, uri12.getLastPathSegment()))
+                    .setMessage(context.getString(R.string.delete_title, downloadData.download.getFile()))
                     .setPositiveButton(R.string.delete, (dialog, which) -> actionListener.onRemoveDownload(downloadData.download.getId()))
                     .setNegativeButton(R.string.cancel, null)
                     .show();
