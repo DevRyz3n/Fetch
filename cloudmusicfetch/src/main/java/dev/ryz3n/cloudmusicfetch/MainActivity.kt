@@ -131,6 +131,7 @@ class MainActivity : AppCompatActivity(), ActionListener {
         if (requestCode == STORAGE_PERMISSION_CODE && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             receiveShareMusic()
         } else {
+            checkStoragePermissions()
             Snackbar.make(cl_root, R.string.permission_not_enabled, Snackbar.LENGTH_INDEFINITE).show()
         }
     }
