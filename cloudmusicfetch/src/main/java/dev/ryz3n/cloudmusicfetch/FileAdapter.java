@@ -61,10 +61,9 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
         holder.titleTextView.setText(uri.getLastPathSegment());
 
         String s = downloadData.download.getFile();
-        holder.titleTextView.setText(s);
+        holder.titleTextView.setText(s.replace("/storage/emulated", ""));
 
-
-        holder.statusTextView.setText(getStatusString(status));
+        holder.statusTextView.setText(getStatusString(context, status));
 
         int progress = downloadData.download.getProgress();
         if (progress == -1) { // Download progress is undermined at the moment.
@@ -176,7 +175,7 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
             final DownloadData downloadData = new DownloadData();
             downloadData.id = download.getId();
             downloadData.download = download;
-            downloads.add(0,downloadData);
+            downloads.add(0, downloadData);
             notifyItemInserted(downloads.size() - 1);
         } else {
             data.download = download;
@@ -212,24 +211,24 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
         }
     }
 
-    private String getStatusString(Status status) {
+    private String getStatusString(Context context, Status status) {
         switch (status) {
             case COMPLETED:
-                return "Done";
+                return context.getString(R.string.download_status_done);
             case DOWNLOADING:
-                return "Downloading";
+                return context.getString(R.string.download_status_downloading);
             case FAILED:
-                return "Error";
+                return context.getString(R.string.download_status_failed);
             case PAUSED:
-                return "Paused";
+                return context.getString(R.string.download_status_paused);
             case QUEUED:
-                return "Waiting in Queue";
+                return context.getString(R.string.download_status_queued);
             case REMOVED:
-                return "Removed";
+                return context.getString(R.string.download_status_removed);
             case NONE:
-                return "Not Queued";
+                return context.getString(R.string.download_status_none);
             default:
-                return "Unknown";
+                return context.getString(R.string.download_status_default);
         }
     }
 

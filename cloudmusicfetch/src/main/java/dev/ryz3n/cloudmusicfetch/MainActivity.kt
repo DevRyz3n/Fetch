@@ -47,15 +47,6 @@ class MainActivity : AppCompatActivity(), ActionListener {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
-        /*fetch.close()
-
-        val fetchConfiguration = FetchConfiguration.Builder(this)
-                .setDownloadConcurrentLimit(3)
-                .setHttpDownloader(OkHttpDownloader(Downloader.FileDownloaderType.PARALLEL))
-                .setNamespace(FETCH_NAMESPACE)
-                .setNotificationManager(DefaultFetchNotificationManager(this))
-                .build()
-        fetch = Fetch.getInstance(fetchConfiguration)*/
 
         when {
             getIntent()?.action == Intent.ACTION_SEND -> {
@@ -73,7 +64,7 @@ class MainActivity : AppCompatActivity(), ActionListener {
         return if (shareText.startsWith("分享") and shareText.endsWith("(来自@网易云音乐)")) {
             true
         } else {
-            Snackbar.make(cl_root, ("\u274c") + " 下载失败，分享的格式不正确", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(cl_root, ("\u274c") + applicationContext.getString(R.string.share_text_error), Snackbar.LENGTH_LONG).show()
             false
         }
     }
@@ -102,10 +93,6 @@ class MainActivity : AppCompatActivity(), ActionListener {
                     Snackbar.make(cl_root, ("\u274c") + " 下载失败，暂不支持非音乐的分享下载", Snackbar.LENGTH_LONG).show()
                     return
                 }
-
-                /*Data.musicIDs.add(musicInfo[2].trim())
-                Data.musicNames.add(musicInfo[1].trim().musicNameFormat())
-                Data.musicProducers.add(musicInfo[0].trim().musicNameFormat())*/
 
                 enqueueDownload(musicInfo[2].trim(), musicInfo[1].trim().musicNameFormat(), musicInfo[0].trim().musicNameFormat())
             }

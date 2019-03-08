@@ -39,4 +39,18 @@
     <string name="download_speed_bytes" translatable="false">%1$d B/s</string>
     <string name="download_speed_kb" translatable="false">%1$s KB/s</string>
     <string name="download_speed_mb" translatable="false">%1$s MB/s</string>
+
+    <string name="download_status_done">done</string>
+    <string name="download_status_downloading" >downloading</string>
+    <string name="download_status_failed">error</string>
+    <string name="download_status_paused">paused</string>
+    <string name="download_status_queued">waiting in queue</string>
+    <string name="download_status_removed">removed</string>
+    <string name="download_status_none">not queued</string>
+    <string name="download_status_default">unknown</string>
+
+    <string name="share_text_error">The format of the share text is incorrect. Please try again</string>
+    <string name="share_text_is_mv_error">The text shared is not music information, please try again</string>
+
+
 </resources>
