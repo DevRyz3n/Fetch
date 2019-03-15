@@ -66,7 +66,7 @@ public final class Data {
 
     @NonNull
     public static String getSaveDir() {
-        return Environment.getExternalStorageDirectory().toString() + "/netease/cloudmusic/";
+        return Environment.getExternalStorageDirectory().toString() + "/Download/cloudmusic/";
     }
 
 }

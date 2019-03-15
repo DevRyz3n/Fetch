@@ -4,9 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/colorPrimaryDark"
     android:layout_height="wrap_content">
 
     <TextView
+        android:textColor="@color/colorNormalText"
         android:id="@+id/titleTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -38,19 +40,22 @@
         app:layout_constraintTop_toTopOf="@+id/actionButton" />
 
     <Button
+
         android:id="@+id/actionButton"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="14dp"
         android:layout_marginEnd="8dp"
+        android:background="@color/colorPrimary"
         android:text="@string/retry"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorAccentText"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleTextView"/>
 
     <TextView
+        android:textColor="@color/colorNormalTextDark"
         android:id="@+id/progress_TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -65,6 +70,7 @@
         tools:text="10%" />
 
     <TextView
+        android:textColor="@color/colorNormalTextDark"
         android:id="@+id/downloadSpeedTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -82,37 +88,59 @@
         android:id="@+id/remaining_TextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
+        android:textColor="@color/colorNormalText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/status_TextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progress_TextView"
-        tools:text="10s" />
+        tools:text="10s"/>
 
     <TextView
         android:id="@+id/status_TextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
+        android:textColor="@color/colorNormalTextDark"
         android:textStyle="italic|bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/remaining_TextView"
         app:layout_constraintTop_toBottomOf="@+id/actionButton"
-        tools:text="Status" />
+        tools:text="Status"/>
 
     <View
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#E7E7E7"
+        android:background="@color/colorLine"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/pathTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:fontFamily="sans-serif-light"
+        android:lineSpacingExtra="0sp"
+        android:lines="2"
+        android:maxLines="2"
+        android:minLines="1"
+        android:text="TextView"
+        android:textColor="@color/colorNormalTextDark"
+        android:textSize="11sp"
+        android:typeface="normal"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar"
+        app:layout_constraintEnd_toStartOf="@+id/actionButton"
+        app:layout_constraintStart_toStartOf="@+id/titleTextView"
+        app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+        tools:text="https://:www.google.com/ncr/FTHFGJHBYGKFTYFhuhdiahu/nfkahfihiuajnzbjkhbn"/>
 
 </android.support.constraint.ConstraintLayout>

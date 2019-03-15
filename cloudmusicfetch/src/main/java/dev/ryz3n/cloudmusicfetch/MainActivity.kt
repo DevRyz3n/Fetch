@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity(), ActionListener {
         return if (shareText.startsWith("分享") and shareText.endsWith("(来自@网易云音乐)")) {
             true
         } else {
-            Snackbar.make(cl_root, ("\u274c") + applicationContext.getString(R.string.share_text_error), Snackbar.LENGTH_LONG).show()
+            Snackbar.make(cl_root, ("\u274c ") + applicationContext.getString(R.string.share_text_error), Snackbar.LENGTH_LONG).show()
             false
         }
     }
@@ -84,13 +84,12 @@ class MainActivity : AppCompatActivity(), ActionListener {
         intent.getStringExtra(Intent.EXTRA_TEXT)?.let { shareText ->
             // Update UI to reflect text being shared
 
-            tv_share_text.text = shareText
             if (isShareText(applicationContext, shareText)) {
 
                 // 分割格式化后的内容，list中0、1、2、3下标分别为 制作者、歌曲名、歌曲ID、分享者ID
                 val musicInfo = shareText.shareFormat().split("--", "/?userid=")
                 if (musicInfo.size != 4) {
-                    Snackbar.make(cl_root, ("\u274c") + " 下载失败，暂不支持非音乐的分享下载", Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(cl_root, ("\u274c ") + applicationContext.getString(R.string.share_text_is_mv_error), Snackbar.LENGTH_LONG).show()
                     return
                 }
 
@@ -217,7 +216,7 @@ fun String.shareFormat() = this.trim().substring(2, this.length)
         .replace(" (来自@网易云音乐)", "")
 
 fun String.musicNameFormat() = this.replace('?', '？')
-        .replace('/', '_')
+        .replace('/', '／')
         .replace('\\', '＼')
         .replace(':', '：')
         .replace('*', '﹡')

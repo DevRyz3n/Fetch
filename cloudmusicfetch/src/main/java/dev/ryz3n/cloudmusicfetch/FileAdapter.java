@@ -61,7 +61,12 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
         holder.titleTextView.setText(uri.getLastPathSegment());
 
         String s = downloadData.download.getFile();
-        holder.titleTextView.setText(s.replace("/storage/emulated", ""));
+        holder.titleTextView.setText(s.replace("/storage/emulated/0/Download/cloudmusic/", "")
+                .replace("/storage/emulated/1/Download/cloudmusic", "")
+                .replace(".mp3","")
+                .replace('／','/'));
+
+        holder.pathTextView.setText(("\uD83D\uDCF2  ")+s.replace("/storage/emulated/", ""));
 
         holder.statusTextView.setText(getStatusString(context, status));
 
@@ -235,6 +240,7 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public final TextView titleTextView;
+        final TextView pathTextView;
         final TextView statusTextView;
         public final ProgressBar progressBar;
         public final TextView progressTextView;
@@ -245,6 +251,7 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
         ViewHolder(View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.titleTextView);
+            pathTextView = itemView.findViewById(R.id.pathTextView);
             statusTextView = itemView.findViewById(R.id.status_TextView);
             progressBar = itemView.findViewById(R.id.progressBar);
             actionButton = itemView.findViewById(R.id.actionButton);

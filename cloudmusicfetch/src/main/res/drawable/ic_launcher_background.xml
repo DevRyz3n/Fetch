@@ -6,11 +6,11 @@
   <group android:translateX="-69.13869"
       android:translateY="-69.13869">
       <path
-          android:fillColor="#333"
+          android:fillColor="@color/colorPrimary"
           android:name="椭圆 1"
           android:pathData="m256 0c141.4 0 256 114.6 256 256c0 141.4 -114.6 256 -256 256c-141.4 0 -256 -114.6 -256 -256c0 -141.4 114.6 -256 256 -256z" />
       <path
-          android:fillColor="#f64141"
+          android:fillColor="@color/colorAccent"
           android:name="椭圆 2"
           android:pathData="m256 192c35.3 0 64 28.7 64 64c0 35.3 -28.7 64 -64 64c-35.3 0 -64 -28.7 -64 -64c0 -35.3 28.7 -64 64 -64z" />
   </group>
