@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Fetch2</string>
+    <string name="fetch_notification_download_cancel">取消</string>
+    <string name="fetch_notification_download_complete">下载完成</string>
+    <string name="fetch_notification_download_downloading">下载中...</string>
+    <string name="fetch_notification_download_eta_hrs">还需 %1$dh %2$dm %3$ds</string>
+    <string name="fetch_notification_download_eta_min">还需 %1$dm %2$ds</string>
+    <string name="fetch_notification_download_eta_sec">剩余 %1$ds</string>
+    <string name="fetch_notification_download_failed">下载失败</string>
+    <string name="fetch_notification_download_pause">暂停</string>
+    <string name="fetch_notification_download_retry">重试</string>
+    <string name="fetch_notification_download_paused">暂停中</string>
+    <string name="fetch_notification_download_resume">继续下载</string>
+    <string name="fetch_notification_download_starting">准备开始</string>
+</resources>

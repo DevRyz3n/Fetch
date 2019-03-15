@@ -12,6 +12,6 @@
     <string name="fetch_notification_download_paused">Paused</string>
     <string name="fetch_notification_download_starting">Starting</string>
     <string name="fetch_notification_download_downloading">Downloading</string>
-    <string name="fetch_notification_default_channel_id">fetch_downloads_channel_id</string>
-    <string name="fetch_notification_default_channel_name">Downloads</string>
+    <string name="fetch_notification_default_channel_id" translatable="false">fetch_downloads_channel_id</string>
+    <string name="fetch_notification_default_channel_name" translatable="false">Downloads</string>
 </resources>

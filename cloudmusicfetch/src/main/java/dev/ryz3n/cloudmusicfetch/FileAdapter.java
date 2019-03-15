@@ -9,6 +9,7 @@ import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,10 +64,10 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
         String s = downloadData.download.getFile();
         holder.titleTextView.setText(s.replace("/storage/emulated/0/Download/cloudmusic/", "")
                 .replace("/storage/emulated/1/Download/cloudmusic", "")
-                .replace(".mp3","")
-                .replace('／','/'));
+                .replace(".mp3", "")
+                .replace('／', '/'));
 
-        holder.pathTextView.setText(("\uD83D\uDCF2  ")+s.replace("/storage/emulated/", ""));
+        holder.pathTextView.setText(("\uD83D\uDCF2/") + s.replace("/storage/emulated/", ""));
 
         holder.statusTextView.setText(getStatusString(context, status));
 
@@ -91,6 +92,10 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
 
         switch (status) {
             case COMPLETED: {
+                holder.timeRemainingTextView.setVisibility(View.GONE);
+                holder.statusTextView.setVisibility(View.GONE);
+                holder.progressTextView.setText(R.string.download_status_done);
+
                 holder.actionButton.setText(R.string.view);
                 holder.actionButton.setOnClickListener(view -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -113,6 +118,9 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
                 break;
             }
             case FAILED: {
+                holder.statusTextView.setVisibility(View.VISIBLE);
+                holder.timeRemainingTextView.setVisibility(View.VISIBLE);
+
                 holder.actionButton.setText(R.string.retry);
                 holder.actionButton.setOnClickListener(view -> {
                     holder.actionButton.setEnabled(false);
@@ -121,6 +129,9 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
                 break;
             }
             case PAUSED: {
+                holder.statusTextView.setVisibility(View.VISIBLE);
+                holder.timeRemainingTextView.setVisibility(View.VISIBLE);
+
                 holder.actionButton.setText(R.string.resume);
                 holder.actionButton.setOnClickListener(view -> {
                     holder.actionButton.setEnabled(false);
@@ -130,6 +141,9 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
             }
             case DOWNLOADING:
             case QUEUED: {
+                holder.timeRemainingTextView.setVisibility(View.VISIBLE);
+                holder.statusTextView.setVisibility(View.VISIBLE);
+
                 holder.actionButton.setText(R.string.pause);
                 holder.actionButton.setOnClickListener(view -> {
                     holder.actionButton.setEnabled(false);
@@ -138,6 +152,9 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
                 break;
             }
             case ADDED: {
+                holder.statusTextView.setVisibility(View.VISIBLE);
+                holder.timeRemainingTextView.setVisibility(View.VISIBLE);
+
                 holder.actionButton.setText(R.string.download);
                 holder.actionButton.setOnClickListener(view -> {
                     holder.actionButton.setEnabled(false);
@@ -146,13 +163,16 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
                 break;
             }
             default: {
+                holder.statusTextView.setVisibility(View.VISIBLE);
+                holder.timeRemainingTextView.setVisibility(View.VISIBLE);
+
                 break;
             }
         }
 
         //Set delete action
         holder.itemView.setOnLongClickListener(v -> {
-            new AlertDialog.Builder(context)
+            new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.CloudMusicFetchDarkDialog))
                     .setMessage(context.getString(R.string.delete_title, downloadData.download.getFile()))
                     .setPositiveButton(R.string.delete, (dialog, which) -> actionListener.onRemoveDownload(downloadData.download.getId()))
                     .setNegativeButton(R.string.cancel, null)

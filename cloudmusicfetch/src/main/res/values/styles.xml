@@ -10,4 +10,10 @@
         <item name="android:windowBackground">@color/colorPrimaryDark</item>
     </style>
 
+    <style name="CloudMusicFetchDarkDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccentText</item>
+        <item name="android:textColorPrimary">@color/colorNormalTextDark</item>
+    </style>
+
 </resources>

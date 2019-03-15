@@ -45,7 +45,7 @@
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="8dp"
         android:background="@color/colorPrimary"
         android:text="@string/retry"
@@ -55,34 +55,38 @@
         app:layout_constraintTop_toBottomOf="@+id/titleTextView"/>
 
     <TextView
-        android:textColor="@color/colorNormalTextDark"
         android:id="@+id/progress_TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="sans-serif"
+        android:textAllCaps="false"
+        android:textColor="@color/colorNormalTextDark"
+        android:typeface="sans"
         app:layout_constraintBottom_toTopOf="@+id/status_TextView"
         app:layout_constraintEnd_toStartOf="@+id/actionButton"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/progressBar"
         app:layout_constraintTop_toBottomOf="@+id/progressBar"
-        tools:text="10%" />
+        tools:text="10% Done"/>
 
     <TextView
-        android:textColor="@color/colorNormalTextDark"
         android:id="@+id/downloadSpeedTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/colorNormalTextDark"
+        android:textStyle="italic"
         app:layout_constraintBottom_toTopOf="@+id/status_TextView"
         app:layout_constraintEnd_toEndOf="@+id/progressBar"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/progress_TextView"
         app:layout_constraintTop_toBottomOf="@+id/progressBar"
-        tools:text="204 MB/s" />
+        tools:text="204 MB/s"/>
 
     <TextView
         android:id="@+id/remaining_TextView"
@@ -107,8 +111,10 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
+        android:fontFamily="sans-serif"
         android:textColor="@color/colorNormalTextDark"
-        android:textStyle="italic|bold"
+        android:textSize="14sp"
+        android:textStyle="bold|italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/remaining_TextView"
