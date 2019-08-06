@@ -14,6 +14,10 @@ import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2core.Func
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import kotlinx.android.synthetic.main.activity_main.*
+import android.media.MediaScannerConnection
+import android.util.Log
+import android.widget.Toast
+
 
 class MainActivity : AppCompatActivity(), ActionListener {
 
@@ -60,7 +64,7 @@ class MainActivity : AppCompatActivity(), ActionListener {
 
     }
 
-    private fun isShareText(ctx: Context, shareText: String): Boolean {
+    private fun isShareText(shareText: String): Boolean {
         return if (shareText.startsWith("分享") and shareText.endsWith("(来自@网易云音乐)")) {
             true
         } else {
@@ -82,9 +86,8 @@ class MainActivity : AppCompatActivity(), ActionListener {
 
     private fun handleSendText(intent: Intent) {
         intent.getStringExtra(Intent.EXTRA_TEXT)?.let { shareText ->
-            // Update UI to reflect text being shared
 
-            if (isShareText(applicationContext, shareText)) {
+            if (isShareText(shareText)) {
 
                 // 分割格式化后的内容，list中0、1、2、3下标分别为 制作者、歌曲名、歌曲ID、分享者ID
                 val musicInfo = shareText.shareFormat().split("--", "/?userid=")
@@ -131,7 +134,7 @@ class MainActivity : AppCompatActivity(), ActionListener {
         super.onResume()
         fetch.getDownloads(Func {
             val list = ArrayList<Download>(it)
-            list.sortWith(Comparator { first, second -> java.lang.Long.compare(first.created, second.created) })
+            list.sortWith(Comparator { first, second -> first.created.compareTo(second.created) })
             for (download in list) {
                 fileAdapter.addDownload(download)
             }
@@ -159,6 +162,11 @@ class MainActivity : AppCompatActivity(), ActionListener {
 
         override fun onCompleted(download: Download) {
             fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND)
+            // refresh media store
+            MediaScannerConnection.scanFile(applicationContext, arrayOf(download.file), arrayOf("audio/*")) { path, uri ->
+                // Toast.makeText(applicationContext, "$path...$uri", Toast.LENGTH_SHORT).show()
+            }
+            Log.i("MAIN", "file: ${download.file}, fileUri: ${download.fileUri}, url:${download.url}")
         }
 
         override fun onError(download: Download, error: Error, throwable: Throwable?) {

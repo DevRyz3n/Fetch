@@ -51,22 +51,10 @@ public final class Data {
         return Uri.parse(url).getLastPathSegment();
     }
 
-    @NonNull
-    public static List<Request> getGameUpdates() {
-        final List<Request> requests = new ArrayList<>();
-        final String url = "http://speedtest.ftp.otenet.gr/files/test100k.db";
-        for (int i = 0; i < 10; i++) {
-            final String filePath = getSaveDir() + "/gameAssets/" + "asset_" + i + ".asset";
-            final Request request = new Request(url, filePath);
-            request.setPriority(Priority.HIGH);
-            requests.add(request);
-        }
-        return requests;
-    }
 
     @NonNull
     public static String getSaveDir() {
-        return Environment.getExternalStorageDirectory().toString() + "/Download/cloudmusic/";
+        return Environment.getExternalStorageDirectory().toString() + "/Download/163MusicFetcher/";
     }
 
 }
