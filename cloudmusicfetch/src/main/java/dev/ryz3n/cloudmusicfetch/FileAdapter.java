@@ -62,12 +62,13 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
         holder.titleTextView.setText(uri.getLastPathSegment());
 
         String s = downloadData.download.getFile();
-        holder.titleTextView.setText(s.replace("/storage/emulated/0/Download/cloudmusic/", "")
-                .replace("/storage/emulated/1/Download/cloudmusic", "")
+        holder.titleTextView.setText(s.replace("/storage/emulated/0/Download/163MusicFetcher/", "")
+                .replace("/storage/emulated/1/Download/163MusicFetcher", "")
                 .replace(".mp3", "")
-                .replace('／', '/'));
+                .replace('／', '/')
+                .replace('_', '/'));
 
-        holder.pathTextView.setText(("\uD83D\uDCF2/") + s.replace("/storage/emulated/", ""));
+        holder.pathTextView.setText(("\uD83D\uDCF2/") + s.replace("/storage/emulated/", "").replace(".mp3", "_NCM.mp3"));
 
         holder.statusTextView.setText(getStatusString(context, status));
 
@@ -109,7 +110,7 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
                         }
 
                     }
-                    final File file = new File(downloadData.download.getFile());
+                    final File file = new File(downloadData.download.getFile().replace(".mp3", "_NCM.mp3"));
                     final Uri uri1 = Uri.fromFile(file);
                     final Intent share = new Intent(Intent.ACTION_VIEW);
                     share.setDataAndType(uri1, "audio/*");

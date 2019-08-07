@@ -1,7 +1,7 @@
 package dev.ryz3n.cloudmusicfetch
 
 import android.Manifest
-import android.content.Context
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -16,7 +16,10 @@ import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import kotlinx.android.synthetic.main.activity_main.*
 import android.media.MediaScannerConnection
 import android.util.Log
-import android.widget.Toast
+import com.mpatric.mp3agic.ID3v24Tag
+import com.mpatric.mp3agic.Mp3File
+
+import java.io.File
 
 
 class MainActivity : AppCompatActivity(), ActionListener {
@@ -30,8 +33,8 @@ class MainActivity : AppCompatActivity(), ActionListener {
     }
 
     lateinit var fetch: Fetch
-    lateinit var fileAdapter: FileAdapter
 
+    lateinit var fileAdapter: FileAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +77,6 @@ class MainActivity : AppCompatActivity(), ActionListener {
     }
 
     private fun receiveShareMusic() {
-        // 分享
         when {
             intent?.action == Intent.ACTION_SEND -> {
                 if ("text/plain" == intent.type) {
@@ -133,7 +135,7 @@ class MainActivity : AppCompatActivity(), ActionListener {
     override fun onResume() {
         super.onResume()
         fetch.getDownloads(Func {
-            val list = ArrayList<Download>(it)
+            val list = ArrayList(it)
             list.sortWith(Comparator { first, second -> first.created.compareTo(second.created) })
             for (download in list) {
                 fileAdapter.addDownload(download)
@@ -160,13 +162,36 @@ class MainActivity : AppCompatActivity(), ActionListener {
             fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND)
         }
 
+        @SuppressLint("LogNotTimber")
         override fun onCompleted(download: Download) {
             fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND)
+
+            // add id3tag to mp3 file
+            val downloadFilePath = download.file
+            val mp3File = Mp3File(downloadFilePath)
+            val mp3v2Tag = ID3v24Tag()
+            val artistsAndMusicName = downloadFilePath.replace(Data.getSaveDir(), "").replace(".mp3", "").split(" - ")
+            mp3v2Tag.artist = artistsAndMusicName.first().replace('_', ';')
+            mp3v2Tag.title = artistsAndMusicName.last()
+            mp3File.id3v1Tag = mp3v2Tag
+            mp3File.id3v2Tag = mp3v2Tag
+
+            val modifiedFilePath = downloadFilePath.replace(".mp3", "_NCM.mp3")
+            mp3File.save(modifiedFilePath)
             // refresh media store
-            MediaScannerConnection.scanFile(applicationContext, arrayOf(download.file), arrayOf("audio/*")) { path, uri ->
-                // Toast.makeText(applicationContext, "$path...$uri", Toast.LENGTH_SHORT).show()
+            MediaScannerConnection.scanFile(applicationContext, arrayOf(modifiedFilePath), arrayOf("audio/*")) { _, _ -> }
+
+            // delete original file
+            val file = File(downloadFilePath)
+            file.delete()
+            if (file.exists()) {
+                file.canonicalFile.delete()
+                if (file.exists()) {
+                    applicationContext.deleteFile(file.name)
+                }
             }
-            Log.i("MAIN", "file: ${download.file}, fileUri: ${download.fileUri}, url:${download.url}")
+
+            Log.i("TEST", "file: ${download.file}, fileUri: ${download.fileUri}, url:${download.url}")
         }
 
         override fun onError(download: Download, error: Error, throwable: Throwable?) {
@@ -174,8 +199,8 @@ class MainActivity : AppCompatActivity(), ActionListener {
             fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND)
         }
 
-        override fun onProgress(download: Download, etaInMilliseconds: Long, downloadedBytesPerSecond: Long) {
-            fileAdapter.update(download, etaInMilliseconds, downloadedBytesPerSecond)
+        override fun onProgress(download: Download, etaInMilliSeconds: Long, downloadedBytesPerSecond: Long) {
+            fileAdapter.update(download, etaInMilliSeconds, downloadedBytesPerSecond)
         }
 
         override fun onPaused(download: Download) {
@@ -224,7 +249,7 @@ fun String.shareFormat() = this.trim().substring(2, this.length)
         .replace(" (来自@网易云音乐)", "")
 
 fun String.musicNameFormat() = this.replace('?', '？')
-        .replace('/', '／')
+        .replace('/', '_')
         .replace('\\', '＼')
         .replace(':', '：')
         .replace('*', '﹡')

@@ -9,8 +9,8 @@ android {
         applicationId "dev.ryz3n.cloudmusicfetch"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 800
-        versionName "0.8.0"
+        versionCode 801
+        versionName "0.8.1"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -47,6 +47,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroid2_version"
     implementation "io.reactivex.rxjava2:rxjava:$rxJava2_version"
     implementation "com.jakewharton.timber:timber:$timber_version"
+    implementation "com.mpatric:mp3agic:0.9.1"
 
     implementation project(':fetch2okhttp')
     implementation project(':fetch2rx')
