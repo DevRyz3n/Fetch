@@ -24,6 +24,7 @@ import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.Status;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -175,7 +176,32 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
         holder.itemView.setOnLongClickListener(v -> {
             new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.CloudMusicFetchDarkDialog))
                     .setMessage(context.getString(R.string.delete_title, downloadData.download.getFile()))
-                    .setPositiveButton(R.string.delete, (dialog, which) -> actionListener.onRemoveDownload(downloadData.download.getId()))
+                    .setPositiveButton(R.string.delete, (dialog, which) -> {
+                        actionListener.onRemoveDownload(downloadData.download.getId());
+                        // todo real delete file
+                        /**
+                         * val file = File(downloadFilePath)
+                            file.delete()
+                            if (file.exists()) {
+                            file.canonicalFile.delete()
+                            if (file.exists()) {
+                            applicationContext.deleteFile(file.name)
+                            }
+                         }*/
+
+                        File file = new File(downloadData.download.getFile().replace(".mp3", "_NCM.mp3"));
+                        file.delete();
+                        if (file.exists()) {
+                            try {
+                                file.getCanonicalFile().delete();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            if (file.exists())
+                                context.deleteFile(file.getName());
+                        }
+
+                    })
                     .setNegativeButton(R.string.cancel, null)
                     .show();
 

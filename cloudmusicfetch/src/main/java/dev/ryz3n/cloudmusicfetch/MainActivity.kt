@@ -20,6 +20,7 @@ import com.mpatric.mp3agic.ID3v24Tag
 import com.mpatric.mp3agic.Mp3File
 
 import java.io.File
+import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity(), ActionListener {
@@ -167,29 +168,36 @@ class MainActivity : AppCompatActivity(), ActionListener {
             fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND)
 
             // add id3tag to mp3 file
-            val downloadFilePath = download.file
-            val mp3File = Mp3File(downloadFilePath)
-            val mp3v2Tag = ID3v24Tag()
-            val artistsAndMusicName = downloadFilePath.replace(Data.getSaveDir(), "").replace(".mp3", "").split(" - ")
-            mp3v2Tag.artist = artistsAndMusicName.first().replace('_', ';')
-            mp3v2Tag.title = artistsAndMusicName.last()
-            mp3File.id3v1Tag = mp3v2Tag
-            mp3File.id3v2Tag = mp3v2Tag
+            try {
+                val downloadFilePath = download.file
+                val mp3File = Mp3File(downloadFilePath)
+                val mp3v2Tag = ID3v24Tag()
+                val artistsAndMusicName = downloadFilePath.replace(Data.getSaveDir(), "").replace(".mp3", "").split(" - ")
+                mp3v2Tag.artist = artistsAndMusicName.first().replace('_', '/')
+                mp3v2Tag.title = artistsAndMusicName.last()
+                mp3File.id3v1Tag = mp3v2Tag
+                mp3File.id3v2Tag = mp3v2Tag
 
-            val modifiedFilePath = downloadFilePath.replace(".mp3", "_NCM.mp3")
-            mp3File.save(modifiedFilePath)
-            // refresh media store
-            MediaScannerConnection.scanFile(applicationContext, arrayOf(modifiedFilePath), arrayOf("audio/*")) { _, _ -> }
+                val modifiedFilePath = downloadFilePath.replace(".mp3", "_NCM.mp3")
+                mp3File.save(modifiedFilePath)
+                // refresh media store
+                MediaScannerConnection.scanFile(applicationContext, arrayOf(modifiedFilePath), arrayOf("audio/*")) { _, _ -> }
 
-            // delete original file
-            val file = File(downloadFilePath)
-            file.delete()
-            if (file.exists()) {
-                file.canonicalFile.delete()
+                // delete original file
+                val file = File(downloadFilePath)
+                file.delete()
                 if (file.exists()) {
-                    applicationContext.deleteFile(file.name)
+                    file.canonicalFile.delete()
+                    if (file.exists()) {
+                        applicationContext.deleteFile(file.name)
+                    }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
+
+
+
 
             Log.i("TEST", "file: ${download.file}, fileUri: ${download.fileUri}, url:${download.url}")
         }
@@ -240,6 +248,8 @@ class MainActivity : AppCompatActivity(), ActionListener {
         fetch.retry(id)
     }
 }
+
+
 
 fun String.shareFormat() = this.trim().substring(2, this.length)
         .replace("的单曲《", "--")
