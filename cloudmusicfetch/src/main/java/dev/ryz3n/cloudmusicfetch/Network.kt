@@ -61,12 +61,12 @@ object Network {
 
             // publish year
             val simpleDateFormat = SimpleDateFormat("yyyy")
-            val lt = albumX.publishTime / 1000
+            val lt = albumX.publishTime
             val date = Date(lt)
             val publishYear = simpleDateFormat.format(date)
 
 
-            return AlbumDetail(albumX.name, albumX.company, publishYear, blurPicByteArr)
+            return AlbumDetail(albumX.name?:"", albumX.company?:"", publishYear?:"", blurPicByteArr)
 
         } else {
             return AlbumDetail("","","", byteArrayOf())

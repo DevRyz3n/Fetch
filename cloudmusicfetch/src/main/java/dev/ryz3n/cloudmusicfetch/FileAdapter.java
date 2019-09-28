@@ -63,9 +63,11 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
         holder.titleTextView.setText(uri.getLastPathSegment());
 
         String s = downloadData.download.getFile();
+        String[] sArr = s.split(" - ");
+        String needRemove = sArr[sArr.length - 1];
         holder.titleTextView.setText(s.replace("/storage/emulated/0/Download/163MusicFetcher/", "")
                 .replace("/storage/emulated/1/Download/163MusicFetcher", "")
-                .replace(".mp3", "")
+                .replace(" - " + needRemove, "")
                 .replace('／', '/')
                 .replace('_', '/'));
 
@@ -175,18 +177,18 @@ public final class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHold
         //Set delete action
         holder.itemView.setOnLongClickListener(v -> {
             new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.CloudMusicFetchDarkDialog))
-                    .setMessage(context.getString(R.string.delete_title, downloadData.download.getFile()))
+                    .setMessage(context.getString(R.string.delete_title, downloadData.download.getFile().replace(".mp3", "_NCM.mp3")))
                     .setPositiveButton(R.string.delete, (dialog, which) -> {
                         actionListener.onRemoveDownload(downloadData.download.getId());
                         // todo real delete file
                         /**
                          * val file = File(downloadFilePath)
-                            file.delete()
-                            if (file.exists()) {
-                            file.canonicalFile.delete()
-                            if (file.exists()) {
-                            applicationContext.deleteFile(file.name)
-                            }
+                         file.delete()
+                         if (file.exists()) {
+                         file.canonicalFile.delete()
+                         if (file.exists()) {
+                         applicationContext.deleteFile(file.name)
+                         }
                          }*/
 
                         File file = new File(downloadData.download.getFile().replace(".mp3", "_NCM.mp3"));
