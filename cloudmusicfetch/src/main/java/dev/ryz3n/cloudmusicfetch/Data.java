@@ -19,16 +19,13 @@ public final class Data {
 
     static ArrayList<String> musicProducers = new ArrayList<>();*/
 
+    public static String DL_URL_BASE = "http://music.163.com/song/media/outer/url?id=";
 
-    private Data() {
-
-    }
-
+    private Data() {}
 
     @NonNull
-    public static Request getFetchRequest(String musicID, String musicName, String musicProducer) {
-        String DL_URL_BASE = "http://music.163.com/song/media/outer/url?id=";
-        return new Request(DL_URL_BASE + musicID, getFilePath(musicProducer + " - " + musicName));
+    public static Request getFetchRequest(String url, String musicName, String musicProducer, String musicID) {
+        return new Request(url, getFilePath(musicProducer + " - " + musicName + " - " + musicID));
     }
 
     /*@NonNull

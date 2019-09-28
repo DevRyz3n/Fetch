@@ -16,8 +16,11 @@ import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import kotlinx.android.synthetic.main.activity_main.*
 import android.media.MediaScannerConnection
 import android.util.Log
+import android.widget.Toast
 import com.mpatric.mp3agic.ID3v24Tag
 import com.mpatric.mp3agic.Mp3File
+import com.tonyodev.dispatch.DispatchQueue
+import com.tonyodev.dispatch.queuecontroller.DispatchQueueController
 
 import java.io.File
 import java.lang.Exception
@@ -37,13 +40,15 @@ class MainActivity : AppCompatActivity(), ActionListener {
 
     lateinit var fileAdapter: FileAdapter
 
+    private val dispatchQueueController = DispatchQueueController()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         setUpViews()
         val fetchConfiguration = FetchConfiguration.Builder(this)
-                .setDownloadConcurrentLimit(5)
+                .setDownloadConcurrentLimit(4)
                 .setHttpDownloader(OkHttpDownloader(Downloader.FileDownloaderType.SEQUENTIAL))
                 .setNamespace(FETCH_NAMESPACE)
                 .setNotificationManager(DefaultFetchNotificationManager(this))
@@ -99,10 +104,21 @@ class MainActivity : AppCompatActivity(), ActionListener {
                     return
                 }
 
-                enqueueDownload(musicInfo[2].trim(), musicInfo[1].trim().musicNameFormat(), musicInfo[0].trim().musicNameFormat())
+                val musicID = musicInfo[2].trim()
+
+                DispatchQueue.background
+                        .managedBy(dispatchQueueController)
+                        .async {
+                            Network.getRealDownloadUrl(musicID)
+                        }
+                        .post { realUrl ->
+                            Toast.makeText(this, realUrl, Toast.LENGTH_SHORT).show()
+                            enqueueDownload(realUrl, musicInfo[1].trim().musicNameFormat(), musicInfo[0].trim().musicNameFormat(), musicID)
+                        }.start()
             }
         }
     }
+
 
     private fun setUpViews() {
         rv_list.layoutManager = LinearLayoutManager(this)
@@ -128,8 +144,8 @@ class MainActivity : AppCompatActivity(), ActionListener {
         }
     }
 
-    private fun enqueueDownload(musicID: String, musicName: String, musicProducer: String) {
-        val request = Data.getFetchRequest(musicID, musicName, musicProducer)
+    private fun enqueueDownload(url: String, musicName: String, musicProducer: String, musicID: String) {
+        val request = Data.getFetchRequest(url, musicName, musicProducer, musicID)
         fetch.enqueue(request, Func { })
     }
 
@@ -152,6 +168,7 @@ class MainActivity : AppCompatActivity(), ActionListener {
     override fun onDestroy() {
         super.onDestroy()
         fetch.close()
+        dispatchQueueController.cancelAllDispatchQueues()
     }
 
     private val fetchListener = object : AbstractFetchListener() {
@@ -172,26 +189,52 @@ class MainActivity : AppCompatActivity(), ActionListener {
                 val downloadFilePath = download.file
                 val mp3File = Mp3File(downloadFilePath)
                 val mp3v2Tag = ID3v24Tag()
-                val artistsAndMusicName = downloadFilePath.replace(Data.getSaveDir(), "").replace(".mp3", "").split(" - ")
-                mp3v2Tag.artist = artistsAndMusicName.first().replace('_', '/')
-                mp3v2Tag.title = artistsAndMusicName.last()
-                mp3File.id3v1Tag = mp3v2Tag
-                mp3File.id3v2Tag = mp3v2Tag
+                val fileNameDetail = downloadFilePath.replace(Data.getSaveDir(), "").replace(".mp3", "").split(" - ")
+                val musicID = fileNameDetail.last().trim()
 
-                val modifiedFilePath = downloadFilePath.replace(".mp3", "_NCM.mp3")
-                mp3File.save(modifiedFilePath)
-                // refresh media store
-                MediaScannerConnection.scanFile(applicationContext, arrayOf(modifiedFilePath), arrayOf("audio/*")) { _, _ -> }
+                DispatchQueue.background
+                        .managedBy(dispatchQueueController)
+                        .async {
+                            Network.getLyric(musicID)
+                        }.zip(
+                                DispatchQueue.background.managedBy(dispatchQueueController)
+                                        .async {
+                                            Network.getAlbumDetail(musicID)
+                                        }
+                        )
+                        .post {
+                            Log.i("TOSTRING", it.second.toString())
 
-                // delete original file
-                val file = File(downloadFilePath)
-                file.delete()
-                if (file.exists()) {
-                    file.canonicalFile.delete()
-                    if (file.exists()) {
-                        applicationContext.deleteFile(file.name)
-                    }
-                }
+                            mp3v2Tag.lyrics = it.first
+                            mp3v2Tag.album = it.second.albumName
+                            mp3v2Tag.year = it.second.albumPublishYear
+                            mp3v2Tag.copyright = it.second.albumCompany
+                            mp3v2Tag.publisher = it.second.albumCompany
+                            mp3v2Tag.setAlbumImage(it.second.albumBlurPicByteArr, "image/jpeg")
+
+                            Log.i("TOSTRING", fileNameDetail.toString())
+                            mp3v2Tag.artist = fileNameDetail.first().replace('_', '/')
+                            mp3v2Tag.title = fileNameDetail[1]
+                            mp3File.id3v1Tag = mp3v2Tag
+                            mp3File.id3v2Tag = mp3v2Tag
+
+                            val modifiedFilePath = downloadFilePath.replace(".mp3", "_NCM.mp3")
+                            mp3File.save(modifiedFilePath)
+                            // refresh media store
+                            MediaScannerConnection.scanFile(applicationContext, arrayOf(modifiedFilePath), arrayOf("audio/*")) { _, _ -> }
+
+                            // delete original file
+                            val file = File(downloadFilePath)
+                            file.delete()
+                            if (file.exists()) {
+                                file.canonicalFile.delete()
+                                if (file.exists()) {
+                                    applicationContext.deleteFile(file.name)
+                                }
+                            }
+                        }
+                        .start()
+
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -248,7 +291,6 @@ class MainActivity : AppCompatActivity(), ActionListener {
         fetch.retry(id)
     }
 }
-
 
 
 fun String.shareFormat() = this.trim().substring(2, this.length)

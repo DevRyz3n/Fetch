@@ -9,8 +9,8 @@ android {
         applicationId "dev.ryz3n.cloudmusicfetch"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 801
-        versionName "0.8.1"
+        versionCode 802
+        versionName "0.8.2"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -43,11 +43,15 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
     implementation "com.android.support:design:$android_support_version"
     implementation "com.android.support:recyclerview-v7:$android_support_version"
-    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
-    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroid2_version"
-    implementation "io.reactivex.rxjava2:rxjava:$rxJava2_version"
+    //implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+    //implementation "io.reactivex.rxjava2:rxandroid:$rxAndroid2_version"
+    //implementation "io.reactivex.rxjava2:rxjava:$rxJava2_version"
     implementation "com.jakewharton.timber:timber:$timber_version"
+
     implementation "com.mpatric:mp3agic:0.9.1"
+    implementation "com.tonyodev.dispatch:dispatch:1.4.10"
+    implementation "com.tonyodev.dispatch:dispatch-android:1.4.10"
+    implementation 'com.google.code.gson:gson:2.8.5'
 
     implementation project(':fetch2okhttp')
     implementation project(':fetch2rx')
